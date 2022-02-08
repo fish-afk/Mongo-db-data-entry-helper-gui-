@@ -1,7 +1,5 @@
 import tkinter as tk
 from tkinter import *
-from dotenv import load_dotenv
-import os
 from api_request import post_record
 from tkinter import messagebox
 
@@ -10,11 +8,29 @@ root.title("Data entry application")
 root.geometry("900x700")
 root.configure(bg="black")
 
-labels = ["Enter teamname:", "Enter name", "Enter price", "Enter description:", "Enter imagesrc",
-          "Is customizable?", 'Enter qty:']
+labels = ["Enter teamname:", " Enter name", "  Enter price", " Enter description:",
+          " Enter imagesrc", " Is customizable?", '    Enter qty:']
 
-load_dotenv(".env")
-SECRET_KEY = os.environ.get("API_KEY")
+collection_chosen = StringVar(root, "other_kits")
+
+values = {"other_kits": "other_kits",
+          "F1_kits": "F1_kits",
+          "balr_kits": "balr_kits",
+          "promo_kits": "promo_kits"
+          }
+
+
+def printing():
+    print(collection_chosen.get())
+
+
+def add_radio_btns():
+    count = 5
+    for (text, value) in values.items():
+        Radiobutton(root, text=text, variable=collection_chosen, width=10, height=1,
+                    value=value, indicator=0,
+                    background="light blue", command=printing).grid(column=count, row=10)
+        count += 1
 
 
 def add_labels(labels_arr, count):
@@ -56,17 +72,18 @@ def get_input():
 
 def post_records():
     arr = get_input()
-    value = post_record(arr)
-    if value > 300:
+    value = post_record(arr, collection_chosen.get())
+
+    if int(value) > 300 or value is None:
         messagebox.showerror("Error", "An error occured!")
     else:
         messagebox.showinfo("Info", "Record posted successfully!")
 
 
 add_labels(labels, 0)
+add_radio_btns()
 
 Button(root, text="Post record", width=20, height=2, font=("Arial", 12), bg="light yellow",
        command=lambda: post_records()).grid(column=6, row=8)
 
-print(SECRET_KEY)
 root.mainloop()

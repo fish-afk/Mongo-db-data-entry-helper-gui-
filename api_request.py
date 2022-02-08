@@ -1,8 +1,12 @@
 import requests
 import json
-from main import SECRET_KEY
+from dotenv import load_dotenv
+import os
 
-url = "https://data.mongodb-api.com/app/data-zwuiq/endpoint/data/beta/action/insertOne"
+URL = "https://data.mongodb-api.com/app/data-zwuiq/endpoint/data/beta/action/insertOne"
+
+load_dotenv(".env")
+SECRET_KEY = os.environ.get("API_KEY")
 
 
 def destructure(value):
@@ -12,19 +16,19 @@ def destructure(value):
         return False
 
 
-def post_record(*args, **kwargs):
+def post_record(args, collection):
     payload = json.dumps({
-        "collection": "other_kits",
+        "collection": collection,
         "database": "Kits",
         "dataSource": "Cluster1",
         "document": {
-            "teamname": args[0][0],
-            "name": args[0][1],
-            "price": float(args[0][2]),
-            "description": args[0][3],
-            "img_src": args[0][4],
-            "is_customizable": destructure(args[0][5]),
-            "qty": int(args[0][6])
+            "teamname": args[0],
+            "name": args[1],
+            "price": float(args[2]),
+            "description": args[3],
+            "img_src": args[4],
+            "is_customizable": destructure(args[5]),
+            "qty": int(args[6])
 
         }
     })
@@ -34,6 +38,6 @@ def post_record(*args, **kwargs):
         'api-key': SECRET_KEY
     }
 
-    response = requests.request("POST", url, headers=headers, data=payload)
-
+    response = requests.request("POST", URL, headers=headers, data=payload)
+    print(response.text)
     return response.status_code
