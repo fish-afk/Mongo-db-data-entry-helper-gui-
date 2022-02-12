@@ -15,8 +15,7 @@ def destructure(value):
     else:
         return False
 
-
-def post_record(args, collection):
+def post_record(args, collection, length):
     payload = json.dumps({
         "collection": collection,
         "database": "Kits",
@@ -24,11 +23,12 @@ def post_record(args, collection):
         "document": {
             "teamname": args[0],
             "name": args[1],
-            "price": float(args[2]),
+            "price": args[2],
             "description": args[3],
             "img_src": args[4],
             "is_customizable": destructure(args[5]),
-            "qty": int(args[6])
+            "qty": args[6],
+            "id": length
 
         }
     })

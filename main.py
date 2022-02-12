@@ -1,5 +1,8 @@
 import tkinter as tk
 from tkinter import *
+import json
+import requests
+
 from api_request import post_record
 from tkinter import messagebox
 
@@ -21,7 +24,7 @@ values = {"other_kits": "other_kits",
 
 
 def printing():
-    print(collection_chosen.get())
+    print(collection_chosen.get() + "Chosen !")
 
 
 def add_radio_btns():
@@ -70,14 +73,21 @@ def get_input():
     return arr
 
 
+def get_length(query, by="collections"):
+    result = requests.get(f"https://data.mongodb-api.com/app/kitzone-functions-wqhlr/endpoint/return_len?{by}={query}")
+    print(result)
+    return json.dumps(result)
+
+
 def post_records():
     arr = get_input()
-    value = post_record(arr, collection_chosen.get())
+    value = post_record(arr, collection_chosen.get(), get_length(collection_chosen.get()))
 
     if int(value) > 300 or value is None:
         messagebox.showerror("Error", "An error occured!")
     else:
         messagebox.showinfo("Info", "Record posted successfully!")
+        textbox5.delete("1.0", "end")
 
 
 add_labels(labels, 0)
